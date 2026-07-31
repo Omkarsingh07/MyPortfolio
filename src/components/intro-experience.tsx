@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 
 interface IntroContextType {
   introStage:
-    | "loading"
     | "fade_in"
     | "entrance"
     | "wave"
@@ -21,17 +20,16 @@ interface IntroContextType {
 }
 
 const IntroContext = createContext<IntroContextType>({
-  introStage: "completed",
+  introStage: "fade_in",
   skipIntro: () => {},
   replayIntro: () => {},
-  isIntroCompleted: true,
+  isIntroCompleted: false,
 });
 
 export const useIntro = () => useContext(IntroContext);
 
 export function IntroProvider({ children }: { children: ReactNode }) {
   const [introStage, setIntroStage] = useState<
-    | "loading"
     | "fade_in"
     | "entrance"
     | "wave"
@@ -39,39 +37,24 @@ export function IntroProvider({ children }: { children: ReactNode }) {
     | "pause"
     | "transition"
     | "completed"
-  >("loading");
+  >("fade_in");
 
   const skipIntro = () => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("hasSeenOmkarIntro", "true");
-    }
     setIntroStage("completed");
   };
 
   const replayIntro = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("hasSeenOmkarIntro");
-    }
     setIntroStage("fade_in");
   };
 
-  // Check initial state on mount
+  // Always initialize intro on every mount / page load
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const hasSeen = localStorage.getItem("hasSeenOmkarIntro") === "true";
-
-    if (hasSeen || prefersReducedMotion) {
-      setIntroStage("completed");
-    } else {
-      setIntroStage("fade_in");
-    }
+    setIntroStage("fade_in");
   }, []);
 
   // Sequence Timeline Controller
   useEffect(() => {
-    if (introStage === "loading" || introStage === "completed") return;
+    if (introStage === "completed") return;
 
     let timer: NodeJS.Timeout;
 
@@ -103,7 +86,6 @@ export function IntroProvider({ children }: { children: ReactNode }) {
     } else if (introStage === "transition") {
       // 1000ms Transition -> Completed
       timer = setTimeout(() => {
-        localStorage.setItem("hasSeenOmkarIntro", "true");
         setIntroStage("completed");
       }, 1000);
     }
