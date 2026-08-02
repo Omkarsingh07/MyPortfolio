@@ -43,7 +43,7 @@ const allProjects = [
     techStack: ["Next.js", "TypeScript", "Tailwind CSS", "REST API", "Node.js"],
     impact: "Expanded global buyer reach and streamlined product inquiry workflows with 100% digital uptime.",
     githubUrl: "https://github.com/Omkarsingh07",
-    demoUrl: "https://github.com/Omkarsingh07",
+    demoUrl: "https://ashapura-metal-art.vercel.app/",
   },
   {
     title: "E-Commerce ETL & Revenue Analytics Pipeline",
@@ -88,7 +88,7 @@ const allProjects = [
     techStack: ["Python", "PyTorch", "Librosa", "Scikit-Learn", "Audio ML"],
     impact: "Achieved high classification precision across 7 vocal emotional states for automated audio QA.",
     githubUrl: "https://github.com/Omkarsingh07",
-    demoUrl: null,
+    demoUrl: "https://omkarsingh07-speech-recognizer-app-lzjvno.streamlit.app/",
   },
   {
     title: "IRCTC Travel Analytics Dashboard",
@@ -231,28 +231,38 @@ export function SoftwareProjects() {
                     ))}
                   </div>
 
-                  <div className="flex items-center gap-3 mt-auto pt-2">
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={cn(buttonVariants({ size: "sm" }), "w-full rounded-full font-semibold text-xs")}
-                    >
-                      <GithubIcon className="h-4 w-4" />
-                      GitHub Code
-                    </a>
-                    {project.demoUrl && (
-                      <a
-                        href={project.demoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={cn(buttonVariants({ variant: "outline", size: "sm" }), "w-full rounded-full font-semibold text-xs")}
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        Live Demo
-                      </a>
-                    )}
-                  </div>
+                  {(project.githubUrl || project.demoUrl) && (
+                    <div className="flex flex-col sm:flex-row items-center gap-3 mt-auto pt-2">
+                      {project.githubUrl && (
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={cn(
+                            buttonVariants({ variant: "outline", size: "sm" }),
+                            "w-full flex-1 rounded-full font-semibold text-xs transition-all duration-300 hover:-translate-y-0.5"
+                          )}
+                        >
+                          <GithubIcon className="h-4 w-4" />
+                          GitHub Code
+                        </a>
+                      )}
+                      {project.demoUrl && (
+                        <a
+                          href={project.demoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={cn(
+                            buttonVariants({ size: "sm" }),
+                            "w-full flex-1 rounded-full font-semibold text-xs bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-0 shadow-sm hover:shadow transition-all duration-300 hover:-translate-y-0.5"
+                          )}
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          Live Demo
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </ScrollReveal>
