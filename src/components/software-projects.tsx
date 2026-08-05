@@ -88,7 +88,7 @@ const allProjects = [
     techStack: ["Python", "PyTorch", "Librosa", "Scikit-Learn", "Audio ML"],
     impact: "Achieved high classification precision across 7 vocal emotional states for automated audio QA.",
     githubUrl: "https://github.com/Omkarsingh07",
-    demoUrl: "https://omkarsingh07-speech-recognizer-app-lzjvno.streamlit.app/",
+    demoUrl: "https://omkarsingh07-speech-recognizer-app-x0kqba.streamlit.app/",
   },
   {
     title: "IRCTC Travel Analytics Dashboard",

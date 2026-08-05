@@ -193,7 +193,7 @@ export function Contact() {
               </a>
 
               <a
-                href="mailto:omkarssingh26@gmail.com"
+                href="mailto:omkarssingh9@gmail.com"
                 aria-label="Send Email"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "icon" }),
