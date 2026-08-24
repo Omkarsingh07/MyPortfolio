@@ -167,7 +167,7 @@ export function Contact() {
             {/* Social Links Row */}
             <div className="flex items-center gap-3 pt-2">
               <a
-                href="https://linkedin.com/in/omkar-singh9192"
+                href="https://linkedin.com/in/omkarsingh9"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn Profile"

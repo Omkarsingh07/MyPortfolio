@@ -56,7 +56,7 @@ export function Footer() {
             <span>Replay Intro</span>
           </Button>
           <a
-            href="https://linkedin.com/in/omkar-singh9192"
+            href="https://linkedin.com/in/omkarsingh9"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn Profile"
