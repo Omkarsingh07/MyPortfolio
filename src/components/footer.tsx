@@ -100,7 +100,7 @@ export function Footer() {
           variant="outline"
           size="icon"
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 rounded-full shadow-md z-40 bg-background/90 backdrop-blur-md hover:bg-muted border-border/80"
+          className="fixed bottom-24 right-6 rounded-full shadow-md z-40 bg-background/90 backdrop-blur-md hover:bg-muted border-border/80"
           aria-label="Back to top"
         >
           <ArrowUp className="h-4 w-4 text-foreground" />
