@@ -4,7 +4,7 @@ import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeader } from "@/components/section-header";
 import { Code2, Terminal, Sparkles, Brain, BarChart3, Database } from "lucide-react";
 
-const skillGroups = [
+export const skillGroups = [
   {
     icon: Code2,
     title: "Software Engineering",

@@ -30,7 +30,7 @@ const filterCategories = [
   "Automation",
 ];
 
-const allProjects = [
+export const allProjects = [
   {
     title: "Ashapura Metal Art E-Commerce & Catalog Platform",
     filterCategory: "Web Applications",

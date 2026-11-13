@@ -14,7 +14,7 @@ interface WorkExperience {
   achievements: string[];
 }
 
-const experiences: WorkExperience[] = [
+export const experiences: WorkExperience[] = [
   {
     company: "On The Rise Media Agency",
     role: "AI Video Creator",

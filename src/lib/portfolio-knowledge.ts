@@ -1,3 +1,9 @@
+import { allProjects } from "@/components/software-projects";
+import { experiences } from "@/components/experience";
+import { aiVideoProjects } from "@/components/genai-showcase";
+import { skillGroups } from "@/components/skills";
+import { resumeOptions } from "@/components/resume-dropdown";
+
 export interface ChatAction {
   label: string;
   href?: string;
@@ -30,7 +36,7 @@ export function getBotResponse(input: string): ChatBotResponse {
     )
   ) {
     return {
-      text: "Hello! 👋 I'm Omkar's Portfolio Assistant. I can help you learn about his software engineering projects, Generative AI video workflows, machine learning models, experience, or download his resumes. What would you like to explore?",
+      text: "Hello! 👋 I'm Omkar's Portfolio Assistant.\n\nI dynamically track his latest software projects, GenAI video workflows, work experience, and resumes. What would you like to explore?",
       suggestions: [
         "🚀 Top Projects",
         "🧠 AI & ML Skills",
@@ -46,7 +52,7 @@ export function getBotResponse(input: string): ChatBotResponse {
     )
   ) {
     return {
-      text: "I'm Omkar's interactive AI Portfolio Assistant! I know all about his engineering background, full-stack web applications, GenAI video pipelines, data analytics work, and contact details. Ask me anything about his work!",
+      text: "I'm Omkar's interactive AI Portfolio Assistant! I read directly from his active portfolio data—so whenever he adds or updates a project, skill, or job experience, I stay in sync. Ask me anything!",
       suggestions: [
         "Tell me about Omkar",
         "What projects did he build?",
@@ -82,7 +88,7 @@ export function getBotResponse(input: string): ChatBotResponse {
     )
   ) {
     return {
-      text: "🎓 Education:\n• Degree: Bachelor of Technology (B.Tech) in Information Technology\n• University: Rajasthan Technical University (2022 – 2026)\n• Key Coursework: Data Structures & Algorithms, Software Engineering, DBMS (SQL), Machine Learning, Operating Systems, and Computer Networks.",
+      text: "🎓 Education:\n• Degree: Bachelor of Technology (B.Tech) in Information Technology\n• University: Rajasthan Technical University (2022 – 2026)\n• Key Relevant Coursework: Data Structures & Algorithms, Software Engineering, DBMS (SQL & Database Design), Operating Systems, Computer Networks, and Machine Learning.",
       actions: [
         { label: "See Qualifications", href: "#about", action: "scroll" },
       ],
@@ -94,36 +100,20 @@ export function getBotResponse(input: string): ChatBotResponse {
     };
   }
 
-  // 4. Resume / CV
+  // 4. Resume / CV (Dynamically reads from resumeOptions)
   if (/resume|cv|biodata|curriculum vitae|download (resume|cv)/i.test(query)) {
+    const resumeActions: ChatAction[] = resumeOptions.map((res) => ({
+      label: res.title,
+      href: res.filePath,
+      download: true,
+      action: "link",
+    }));
+
     return {
-      text: "📄 Omkar has 4 tailored resumes depending on the role you are hiring for:\n\n1. Software Engineer Resume (Full-stack, APIs, Next.js)\n2. AI / ML Engineer Resume (PyTorch, Deep Learning, Audio ML)\n3. Generative AI Engineer Resume (Sora, Kling, ElevenLabs, Workflows)\n4. Data Analyst Resume (SQL, Python, Power BI, Tableau)\n\nWhich one would you like to download?",
-      actions: [
-        {
-          label: "💻 Software Engineer CV",
-          href: "/resumes/software-engineer.pdf",
-          download: true,
-          action: "link",
-        },
-        {
-          label: "🧠 AI/ML Engineer CV",
-          href: "/resumes/ai-ml-engineer.pdf",
-          download: true,
-          action: "link",
-        },
-        {
-          label: "✨ GenAI Engineer CV",
-          href: "/resumes/genai-engineer.pdf",
-          download: true,
-          action: "link",
-        },
-        {
-          label: "📊 Data Analyst CV",
-          href: "/resumes/data-analyst.pdf",
-          download: true,
-          action: "link",
-        },
-      ],
+      text: `📄 Omkar has ${resumeOptions.length} tailored resumes for different roles:\n\n${resumeOptions
+        .map((r, i) => `${i + 1}. **${r.title}** — ${r.description}`)
+        .join("\n")}\n\nClick below to download:`,
+      actions: resumeActions,
       suggestions: [
         "💼 What is his experience?",
         "📬 Contact Omkar directly",
@@ -131,117 +121,69 @@ export function getBotResponse(input: string): ChatBotResponse {
     };
   }
 
-  // 5. Specific Project: Ashapura Metal Art
-  if (/ashapura|metal art|e-?commerce platform|craft/i.test(query)) {
+  // 5. Dynamic Check for Specific Project Matches
+  // Matches against any project currently inside allProjects (handles new additions or updates automatically)
+  const matchedProject = allProjects.find((project) => {
+    const titleWords = project.title.toLowerCase().split(/\s+/);
+    // If query mentions significant words of the title
+    const matchesTitle = titleWords.some(
+      (word) => word.length > 3 && query.includes(word)
+    );
+    // Or if query mentions the exact filterCategory or badge
+    const matchesCategory =
+      project.filterCategory.toLowerCase() === query ||
+      project.badge.toLowerCase() === query;
+
+    return matchesTitle || matchesCategory;
+  });
+
+  if (matchedProject && !/all projects|what projects|list projects/i.test(query)) {
+    const actions: ChatAction[] = [];
+    if (matchedProject.demoUrl) {
+      actions.push({
+        label: "🌐 Live Demo",
+        href: matchedProject.demoUrl,
+        action: "link",
+      });
+    }
+    if (matchedProject.githubUrl) {
+      actions.push({
+        label: "💻 GitHub Repo",
+        href: matchedProject.githubUrl,
+        action: "link",
+      });
+    }
+    actions.push({
+      label: "View in Projects Section",
+      href: "#software",
+      action: "scroll",
+    });
+
     return {
-      text: "✨ Ashapura Metal Art Platform:\nA full-stack Next.js web application built for a craft manufacturing business. Features dynamic catalog rendering, responsive UI components, and API route query processing for international buyers with 100% digital uptime.\n\n• Tech: Next.js, TypeScript, Tailwind CSS, REST API, Node.js",
-      actions: [
-        {
-          label: "🌐 Live Demo",
-          href: "https://ashapura-metal-art.vercel.app/",
-          action: "link",
-        },
-        {
-          label: "View in Projects Section",
-          href: "#software",
-          action: "scroll",
-        },
-      ],
-      suggestions: [
-        "Tell me about the SER Speech project",
-        "Tell me about the IRCTC project",
-        "Tell me about the ETL pipeline",
-      ],
+      text: `✨ **${matchedProject.title}** (${matchedProject.badge})\n\n• **Problem:** ${matchedProject.problem}\n• **Solution:** ${matchedProject.solution}\n• **Tech Stack:** ${matchedProject.techStack.join(", ")}\n• **Impact:** ${matchedProject.impact}`,
+      actions,
+      suggestions: allProjects
+        .filter((p) => p.title !== matchedProject.title)
+        .slice(0, 3)
+        .map((p) => `Tell me about ${p.title.split(" ")[0]}`),
     };
   }
 
-  // 6. Specific Project: SER / Speech Emotion Recognizer
-  if (/speech|ser|emotion|librosa|audio ml|voice recogni/i.test(query)) {
-    return {
-      text: "🎙️ Speech Emotion Recognizer (SER):\nA deep learning classification pipeline developed with PyTorch and Librosa. It extracts audio spectrogram features from speech signals and detects 7 vocal emotional states in real-time for customer QA and sentiment analysis.\n\n• Tech: Python, PyTorch, Librosa, Scikit-Learn, Streamlit",
-      actions: [
-        {
-          label: "🚀 Try Streamlit Demo",
-          href: "https://omkarsingh07-speech-recognizer-app-x0kqba.streamlit.app/",
-          action: "link",
-        },
-        {
-          label: "View in Projects Section",
-          href: "#software",
-          action: "scroll",
-        },
-      ],
-      suggestions: [
-        "IRCTC Travel Analytics",
-        "E-Commerce ETL Pipeline",
-        "What are his ML skills?",
-      ],
-    };
-  }
-
-  // 7. Specific Project: IRCTC
-  if (/irctc|train|railway|travel analytics|gmail api/i.test(query)) {
-    return {
-      text: "🚆 IRCTC Travel Analytics Dashboard:\nA full-stack platform that synchronizes IRCTC confirmation emails via Gmail API (OAuth 2.0). It parses journey, fare, and refund details using BeautifulSoup & Regex, storing data in SQLite with automated duplicate detection and incremental sync.\n\n• Tech: React, FastAPI, Python, SQLite, Gmail API, BeautifulSoup",
-      actions: [
-        {
-          label: "View in Projects Section",
-          href: "#software",
-          action: "scroll",
-        },
-      ],
-      suggestions: [
-        "Ashapura Metal Art E-Commerce",
-        "Speech Emotion Recognizer",
-        "Zomato Analytics",
-      ],
-    };
-  }
-
-  // 8. Specific Project: ETL Pipeline
-  if (/etl|pipeline|sales analysis|revenue analytics|transaction/i.test(query)) {
-    return {
-      text: "⚡ E-Commerce ETL & Revenue Analytics Pipeline:\nAn automated data engineering pipeline in Python and Pandas. Ingests, validates, and cleans raw unstructured transaction logs, emitting analytical Plotly reports and JSON API feeds while cutting manual data preparation by 60%.\n\n• Tech: Python, Pandas, Plotly, REST API, ETL Architecture",
-      actions: [
-        {
-          label: "GitHub Repository",
-          href: "https://github.com/Omkarsingh07/e-commerce-sales-analysis",
-          action: "link",
-        },
-      ],
-      suggestions: [
-        "What other projects has he built?",
-        "Zomato Analytics project",
-      ],
-    };
-  }
-
-  // 9. Specific Project: Zomato
-  if (/zomato|restaurant|market intelligence|cuisine/i.test(query)) {
-    return {
-      text: "🍽️ Zomato Restaurant Analytics & Market Intelligence:\nAn exploratory data analytics project that analyzes pricing distribution, customer ratings, and delivery density across restaurant networks to optimize cloud kitchen locations.\n\n• Tech: Python, Pandas, Tableau, SQL, Seaborn",
-      actions: [
-        {
-          label: "View in Projects Section",
-          href: "#software",
-          action: "scroll",
-        },
-      ],
-      suggestions: [
-        "Tell me about his data analytics skills",
-        "View all software projects",
-      ],
-    };
-  }
-
-  // 10. General Projects
+  // 6. Dynamic All Projects List (Reflects added/deleted projects automatically)
   if (
     /project|portfolio|built|apps|applications|work showcase|github/i.test(
       query
     )
   ) {
+    const projectsList = allProjects
+      .map(
+        (p, i) =>
+          `${i + 1}. **${p.title}** (${p.badge})\n   Tech: ${p.techStack.slice(0, 4).join(", ")}`
+      )
+      .join("\n\n");
+
     return {
-      text: "Omkar has engineered projects across Full-Stack, AI/ML, and Data Engineering:\n\n• 🌐 Ashapura Metal Art: Production e-commerce platform with Next.js\n• 🎙️ Speech Emotion Recognizer: Deep learning audio classifier in PyTorch\n• 🚆 IRCTC Travel Analytics: Gmail OAuth API automated data parser\n• ⚡ E-Commerce ETL Pipeline: Automated Python/Pandas transformation engine\n• 🍽️ Zomato Market Intelligence: Restaurant network pricing & BI analytics",
+      text: `Omkar currently has ${allProjects.length} featured software engineering projects:\n\n${projectsList}\n\nAsk me about any specific project for details or live demo links!`,
       actions: [
         { label: "Explore Projects Section", href: "#software", action: "scroll" },
         {
@@ -250,22 +192,69 @@ export function getBotResponse(input: string): ChatBotResponse {
           action: "link",
         },
       ],
+      suggestions: allProjects.slice(0, 3).map((p) => `Tell me about ${p.title.split(" ")[0]}`),
+    };
+  }
+
+  // 7. Dynamic Check for Specific Work Experience Matches
+  const matchedExp = experiences.find((exp) => {
+    const compName = exp.company.toLowerCase();
+    const roleName = exp.role.toLowerCase();
+    return query.includes(compName) || compName.split(/\s+/).some((w) => w.length > 3 && query.includes(w)) || query.includes(roleName);
+  });
+
+  if (matchedExp && !/all experience|work history/i.test(query)) {
+    return {
+      text: `💼 **${matchedExp.role}** at **${matchedExp.company}**\n• **Period:** ${matchedExp.period} (${matchedExp.location || "Remote"})\n• **Tech Stack:** ${matchedExp.techStack.join(", ")}\n• **Key Achievements:**\n${matchedExp.achievements.map((a) => `  - ${a}`).join("\n")}`,
+      actions: [
+        { label: "View in Experience Section", href: "#experience", action: "scroll" },
+      ],
       suggestions: [
-        "Tell me about GenAI videos",
-        "Download Software Engineer Resume",
-        "What is his tech stack?",
+        "What other companies has he worked at?",
+        "📄 Download Resume",
+        "📬 Contact Omkar",
       ],
     };
   }
 
-  // 11. Generative AI & Video Workflows
+  // 8. Dynamic All Work Experience List
+  if (
+    /experience|career|job|intern|work history|company|companies/i.test(
+      query
+    )
+  ) {
+    const expList = experiences
+      .map(
+        (exp, i) =>
+          `${i + 1}. **${exp.company}** — ${exp.role} (${exp.period})\n   Tech: ${exp.techStack.slice(0, 4).join(", ")}`
+      )
+      .join("\n\n");
+
+    return {
+      text: `💼 **Professional Journey (${experiences.length} Positions):**\n\n${expList}`,
+      actions: [
+        { label: "View Experience Cards", href: "#experience", action: "scroll" },
+      ],
+      suggestions: [
+        "📬 Contact Omkar for an opportunity",
+        "📄 Download Full Resume",
+        "🚀 View Software Projects",
+      ],
+    };
+  }
+
+  // 9. Generative AI & Video Workflows (Dynamic from aiVideoProjects)
   if (
     /genai|generative ai|video|sora|kling|runway|elevenlabs|midjourney|davinci|freepik|diffusion|voice cloning|video creation/i.test(
       query
     )
   ) {
+    const videoList = aiVideoProjects
+      .map((v) => `• **${v.title}** (${v.category}): ${v.tools.join(", ")}`)
+      .join("\n");
+
     return {
-      text: "🎬 Generative AI & Video Workflows:\nOmkar is an experienced Generative AI Engineer with expertise in end-to-end synthetic media pipelines:\n\n• Video Synthesis: Sora, Kling AI, Runway Gen-2, Higgsfield\n• Audio Synthesis: ElevenLabs neural voice cloning, multi-lingual dubbing\n• Visual Concept Art: Midjourney v6, Freepik AI, Flow AI\n• Post-Production: DaVinci Resolve color grading & timeline assembly\n\nHe has created commercial clips, storytelling pieces, and diffusion concepts.",
+      text: `🎬 **Generative AI & Video Engineering Workflows:**\nOmkar builds end-to-end synthetic media pipelines with motion diffusion and neural audio:\n\n${videoList}\n\nYou can watch the video streams right on the portfolio!`,
       actions: [
         {
           label: "Watch GenAI Video Showcase",
@@ -287,16 +276,20 @@ export function getBotResponse(input: string): ChatBotResponse {
     };
   }
 
-  // 12. Skills & Tech Stack
+  // 10. Technical Skills (Dynamic from skillGroups)
   if (
     /skill|tech stack|technolog|stack|languages|framework|tools|python|typescript|react|next\.?js|sql|pytorch/i.test(
       query
     )
   ) {
+    const skillsList = skillGroups
+      .map((g) => `• **${g.title}:** ${g.skills.join(", ")}`)
+      .join("\n");
+
     return {
-      text: "🛠️ Technical Skills Overview:\n\n• Languages: Python, TypeScript, JavaScript, SQL, HTML5/CSS3\n• Frontend & Full Stack: Next.js, React, Tailwind CSS, REST APIs, FastAPI\n• Machine Learning: PyTorch, Scikit-Learn, Pandas, NumPy, Librosa (SER)\n• Generative AI: Sora, Kling AI, Runway, ElevenLabs, Midjourney v6, DaVinci Resolve\n• Data & BI: MySQL, PostgreSQL, SQLite, Tableau, Power BI, Advanced Excel\n• DevOps & Tools: Git, GitHub, Docker, Linux Shell",
+      text: `🛠️ **Technical Competencies Matrix:**\n\n${skillsList}`,
       actions: [
-        { label: "View Skills Matrix", href: "#skills", action: "scroll" },
+        { label: "View Skills Section", href: "#skills", action: "scroll" },
       ],
       suggestions: [
         "🚀 See Projects built with this stack",
@@ -306,33 +299,14 @@ export function getBotResponse(input: string): ChatBotResponse {
     };
   }
 
-  // 13. Work Experience & Career History
-  if (
-    /experience|career|job|intern|work history|company|companies|weather films|on the rise|tax-o-smart|idbi/i.test(
-      query
-    )
-  ) {
-    return {
-      text: "💼 Professional Experience:\n\n1. On The Rise Media Agency (Feb 2026 – Apr 2026 · Remote)\n   AI Video Creator — Prompt engineering, Kling AI, Runway, ElevenLabs voice cloning & DaVinci Resolve.\n\n2. Weather Films (Dec 2025 – Feb 2026 · Remote)\n   Generative AI Creator — Storyboarding, Midjourney v6, motion diffusion & pre-production.\n\n3. Tax-O-Smart & IDBI Bank Audit (June 2025 – July 2025 · Mumbai)\n   Data Analyst & Software Intern — Financial ETL pipelines, SQL verification, and IDBI Bank ledger audit automation.",
-      actions: [
-        { label: "View Experience Cards", href: "#experience", action: "scroll" },
-      ],
-      suggestions: [
-        "📬 Contact Omkar for an opportunity",
-        "📄 Download Full Resume",
-        "🚀 View Software Projects",
-      ],
-    };
-  }
-
-  // 14. Contact / Hiring / Location
+  // 11. Contact / Hiring / Location
   if (
     /contact|hire|email|phone|call|message|reach|location|where (is he|are you)|mumbai|available|opportunity|job offer/i.test(
       query
     )
   ) {
     return {
-      text: "📬 Get In Touch with Omkar:\n\n• Email: omkarssingh26@gmail.com\n• Phone: +91-8619268050\n• Location: Mumbai, India\n• Response SLA: Usually within 24 hours\n• Status: 🟢 Open to Software Engineering, GenAI, and Data Analytics roles!",
+      text: "📬 **Get In Touch with Omkar:**\n\n• **Email:** omkarssingh26@gmail.com\n• **Phone:** +91-8619268050\n• **Location:** Mumbai, India\n• **Response SLA:** Within 24 Hours\n• **Status:** 🟢 Open to Software Engineering, GenAI, and Data Analytics roles!",
       actions: [
         { label: "Go to Contact Form", href: "#contact", action: "scroll" },
         {
@@ -359,7 +333,7 @@ export function getBotResponse(input: string): ChatBotResponse {
     };
   }
 
-  // 15. Easter Egg: Doraemon
+  // 12. Easter Egg: Doraemon
   if (/doraemon|gadget|take-?copter|bamboo copter|cat robot|nobita/i.test(query)) {
     return {
       text: "🚁 You noticed Doraemon! Omkar loves technology that feels like 22nd-century magic. That's why the hero section features a custom vector Doraemon with a spinning Take-Copter. With modern AI and software engineering, we're building the future one gadget at a time!",
@@ -373,7 +347,7 @@ export function getBotResponse(input: string): ChatBotResponse {
     };
   }
 
-  // 16. Default Fallback
+  // 13. Default Fallback
   return {
     text: "I'm not completely sure about that specific detail, but I can tell you all about Omkar's software projects, AI video synthesis workflows, machine learning models, work experience, or help you connect with him directly!",
     actions: [
@@ -389,4 +363,3 @@ export function getBotResponse(input: string): ChatBotResponse {
     ],
   };
 }
-

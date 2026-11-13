@@ -37,7 +37,7 @@ function getCloudinaryOptimizedVideoUrl(videoUrl?: string): string | undefined {
   return videoUrl.replace("/upload/", "/upload/q_auto,f_auto/");
 }
 
-const aiVideoProjects: AiVideoProject[] = [
+export const aiVideoProjects: AiVideoProject[] = [
   {
     id: "project-1",
     category: "Cinematic",
